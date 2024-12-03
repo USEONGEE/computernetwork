@@ -1,0 +1,73 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.4.0'
+    id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    // For Spring WebSocket and STOMP
+    implementation 'org.springframework:spring-websocket:6.0.12'
+    implementation 'org.springframework:spring-messaging:6.0.12'
+    implementation 'jakarta.websocket:jakarta.websocket-api:2.1.1'
+    implementation 'org.glassfish.tyrus:tyrus-client:2.1.1' // WebSocket 클라이언트 구현체
+    implementation 'org.glassfish.tyrus:tyrus-core:2.1.1'
+    implementation 'org.glassfish.tyrus:tyrus-spi:2.1.1'
+
+    implementation 'org.projectlombok:lombok:1.18.28'
+    annotationProcessor 'org.projectlombok:lombok:1.18.28'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.28' // 테스트용
+
+
+
+
+    implementation 'org.java-websocket:Java-WebSocket:1.5.3'
+    // netty - 스프링 의존 x
+    // Reactor Netty for WebSocket support
+//    implementation 'io.projectreactor.netty:reactor-netty-core:1.1.6'
+//    implementation 'io.projectreactor.netty:reactor-netty-http:1.1.6'
+//
+//    // Netty STOMP Codec for STOMP frame handling
+//    implementation 'io.netty:netty-codec-stomp:4.1.96.Final'
+//
+//    // Reactor Core for reactive programming
+//    implementation 'io.projectreactor:reactor-core:3.5.8'
+//
+//    // For JSON handling
+//    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
+//
+//    // For HTTP client (Apache HttpClient)
+//    implementation 'org.apache.httpcomponents.client5:httpclient5:5.2.1'
+
+
+    // For JSON handling
+    // Core Jackson library for data binding (includes ObjectMapper)
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
+
+
+    // Optional: Jackson annotations (for @JsonProperty, @JsonIgnore, etc.)
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.15.2'
+
+    // Optional: Jackson core (low-level streaming API)
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.15.2'
+
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
