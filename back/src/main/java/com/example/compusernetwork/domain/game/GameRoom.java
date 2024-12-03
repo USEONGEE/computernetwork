@@ -2,12 +2,14 @@ package com.example.compusernetwork.domain.game;
 
 import com.example.compusernetwork.domain.member.Member;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.UUID;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class GameRoom {
     private String roomId;
     private Member player1;

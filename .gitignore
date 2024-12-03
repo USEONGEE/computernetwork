@@ -1,0 +1,105 @@
+# Ignore macOS specific files
+.DS_Store
+
+# Windows thumbnail cache files
+Thumbs.db
+
+# IntelliJ IDEA specific files
+.idea/
+*.iml
+*.iws
+
+# Compiled files
+*.class
+*.war
+*.ear
+
+# Logs
+/logs/
+/*.log
+
+# Excluded directories
+/out/
+/target/
+/build/
+
+# Maven specific files
+*.mvn/
+
+# Gradle specific files
+.gradle/
+/build/
+
+# Node.js
+node_modules/
+
+# Temporary files
+*.swp
+*~.nib
+*.tmp
+*.bak
+*.sublime-workspace
+*.orig
+
+# Generated files
+*.jar
+*.war
+*.ear
+
+# IDE-specific generated files
+.idea/
+*.ipr
+*.iws
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/gradle.xml
+.idea/libraries
+.idea/modules.xml
+.idea/misc.xml
+.idea/vcs.xml
+.idea/dictionaries
+.idea/jsLibraryMappings.xml
+
+# IntelliJ-specific directories
+.idea/
+.idea/modules
+.idea/.name
+.idea/inspectionProfiles
+.idea/artifacts
+.idea/compiler.xml
+.idea/scopes
+.idea/modules.xml
+.idea/dictionaries
+.idea/vcs.xml
+.idea/caches/build_file_checksums.ser
+
+# IntelliJ coverage data
+.idea/coverage
+coverage/
+
+# JetBrains IDEs settings
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/dictionaries
+.idea/**/vcs.xml
+
+# Gradle wrapper files
+.gradle/
+.gradle/wrapper/
+
+# Gradle generated files
+build/
+.gradle/
+*.jar
+*.war
+*.ear
+
+# Exclude build tools directories
+/.idea/
+*.log
+*.iml
+/.target/
+*.xml
+
+/resources/
+resources/

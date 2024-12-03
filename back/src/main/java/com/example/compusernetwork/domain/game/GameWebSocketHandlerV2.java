@@ -5,6 +5,7 @@ import com.example.compusernetwork.domain.game.message.GameMessage;
 import com.example.compusernetwork.domain.member.Member;
 import com.example.compusernetwork.domain.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -18,6 +19,7 @@ import static com.example.compusernetwork.domain.game.message.GameMessageType.*;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class GameWebSocketHandlerV2 {
 
     private final MemberRepository userRepository;
@@ -30,6 +32,7 @@ public class GameWebSocketHandlerV2 {
     @MessageMapping("/match")
     @SendTo("/topic/matched")
     public GameMessage handleMatch(StompHeaderAccessor accessor) {
+        log.info("Match request received");
         String username = getUsername(accessor);
         Optional<Member> optionalMember = userRepository.findById(username);
         if(optionalMember.isEmpty()) return new GameMessage(ERROR, ErrorMessage.USER_NOT_EXIST.getMessage());
@@ -83,11 +86,12 @@ public class GameWebSocketHandlerV2 {
             expression = expression.substring(0, expression.length() - 1);
         }
         gameState.getExpressions().put(username, expression);
+        log.info("Expression removed: {}", expression);
 
         return new GameMessage(REMOVE_EXPRESSION, expression);
     }
 
-@MessageMapping("/remove-all-expression")
+    @MessageMapping("/remove-all-expression")
     @SendTo("/topic/remove-all-expression")
     public GameMessage handleRemoveAllExpression(GameMessage gameMessage, StompHeaderAccessor accessor){
         String username = getUsername(accessor);
@@ -108,14 +112,15 @@ public class GameWebSocketHandlerV2 {
 
     // ATTACK 메시지 처리
     @MessageMapping("/attack")
-    public void handleAttack(GameMessage gameMessage, StompHeaderAccessor accessor) {
+    public GameMessage handleAttack(GameMessage gameMessage, StompHeaderAccessor accessor) {
+        log.info("attack");
         String attacker = getUsername(accessor);
 
         // 게임 방 가져오기
         GameRoom gameRoom = matchService.getGameRoom(gameMessage.getRoomId());
         if (gameRoom == null) {
             sendToUser(attacker, new GameMessage(ERROR, ErrorMessage.ROOM_NOT_EXIST.getMessage()));
-            return;
+            return null;
         }
 
         GameState gameState = gameRoom.getGameState();
@@ -123,7 +128,7 @@ public class GameWebSocketHandlerV2 {
         // 현재 플레이어인지 확인
         if (!gameState.getCurrentPlayer().getName().equals(attacker)) {
             sendToUser(attacker, new GameMessage(ERROR, ErrorMessage.NOT_YOUR_TURN.getMessage()));
-            return;
+            return null;
         }
 
         // 공격 처리 로직
@@ -131,7 +136,7 @@ public class GameWebSocketHandlerV2 {
             String expression = gameState.getExpressions().get(attacker);
             if (expression == null || expression.isEmpty()) {
                 sendToUser(attacker, new GameMessage(ERROR, INVALID_EXPRESSION.getMessage()));
-                return;
+                return null;
             }
 
             double result = evaluateExpression(expression);
@@ -157,17 +162,20 @@ public class GameWebSocketHandlerV2 {
                 }
             } else {
                 // 공격 실패
-                sendToUser(attacker, new GameMessage(ATTACK_FAIL, null));
-
-                // 턴 전환
+                log.info("Attack failed");
+                String defender = gameState.getOpponent().getName();
                 gameState.switchTurn();
-                sendToUser(gameState.getCurrentPlayer().getName(), new GameMessage(YOUR_TURN, gameState));
+//                sendToUser(gameState.getCurrentPlayer().getName(), new GameMessage(YOUR_TURN, gameState));
+                return new GameMessage(ATTACK_FAIL, gameState.getPlayerHP().get(defender));
+
+
             }
         } catch (Exception e) {
             sendToUser(attacker, new GameMessage(ERROR, INVALID_EXPRESSION.getMessage()));
             gameState.switchTurn();
             sendToUser(gameState.getCurrentPlayer().getName(), new GameMessage(YOUR_TURN, gameState));
         }
+        return null;
     }
 
     private void sendToUser(String username, GameMessage message) {

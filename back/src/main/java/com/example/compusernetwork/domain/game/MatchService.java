@@ -18,6 +18,7 @@ public class MatchService {
             waitingQueue.add(member);
             return null;
         } else {
+            if (waitingQueue.contains(member)) return null;
             Member opponent = waitingQueue.poll();
             GameRoom gameRoom = new GameRoom(member, opponent);
             gameRooms.put(gameRoom.getRoomId(), gameRoom);
